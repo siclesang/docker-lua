@@ -1,9 +1,12 @@
-
-
-dependent on lua-curl
-
-
-
+----------------------------------------------------------
+--
+--
+--
+--dependent on lua-curl
+--
+--
+--
+----------------------------------------------------------
 -----------------------------------------------------------
 -- a new dockerd node
 -- function new ; parameter: host , port  default 127.0.0.1 2375
@@ -16,6 +19,9 @@ dependent on lua-curl
 ----------------------------------------------------------
 --inspect  history info of a image.
 --function imageHistoryInfo ; parameter:imagename
+----------------------------------------------------------
+--create a image
+--function imageCreate  ; parameter: imagename,tar file(contain a Dockerfile being in the . dir path of  tar file)
 ----------------------------------------------------------
 --start a container
 --function containerStart ; parameter: containerid
