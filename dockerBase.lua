@@ -1,5 +1,13 @@
 local _M={}
-
+----------------------------------------------------------
+--
+--
+--
+--dependent on lua-curl
+--
+--
+--
+----------------------------------------------------------
 
 _M.host="127.0.0.1"
 _M.port="2375"
@@ -48,6 +56,21 @@ function _M.imageHistoryInfo(imgname)
 	return _M.run(domain..interface,method)
 end
 
+
+----------------------------------------------------------
+--create a image
+--function imageCreate  ; parameter: imagename,tar file(contain a Dockerfile being in the . dir path of  tar file)
+function _M.imageCreate(imgname,tar)
+        local domain=_M.host..":".._M.port
+        local method="POST"
+        local interface="/build?t="..imgname
+	local header={"Content-type:application/tar;charset=UTF-8"}
+        local f=io.open(tar,"rb")
+        local data= f:read("*a")
+        io.close(f)
+        return _M.run(domain..interface,method,data,header)
+
+end
 
 ----------------------------------------------------------
 --start a container
@@ -125,19 +148,21 @@ function _M.networkDel(nname)
 end
 
 
-function _M.run(url,method,data)
+function _M.run(url,method,data,header)
 	local curl = require "lcurl"
         local result=nil
+
+	if header == nil then
+		header={"Content-type:application/json;charset=UTF-8"}
+	end
         local c=curl.easy()
         c:setopt{
                 -- xxx = curl.OPT_XXX
                 [curl.OPT_URL] =url,
 		[curl.OPT_CUSTOMREQUEST] =method,
-                httpheader = {
-                      "Content-type:application/json;charset=UTF-8",
-                      "User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/39.0.2171.71 Safari/537.36"
-                },
+                httpheader = header,
                 writefunction = function(str) result=(result or '')..str end,
+		readfunction = function () return data or nil  end,
                 connecttimeout = 3,
                 ssl_verifyhost=0,
                 ssl_verifypeer=0,
